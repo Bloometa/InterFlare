@@ -1,0 +1,19 @@
+{
+    "name": "interflare",
+    "version": "0.0.1",
+    "description": "A Social Media Management Service",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "repository": "https://github.com/crookm/InterFlare",
+    "author": {
+        "name": "Matt Crook",
+        "email": "matt@crook.nz",
+        "url": "http://matt.crook.nz/"
+    },
+    "license": "UNLICENSED",
+    "devDependencies": {
+        "electron": "~1.6.2"
+    }
+}
