@@ -107,6 +107,12 @@ method.UpdateDBAsync = function() {
     }
 }
 
+method.CloseDB = function() {
+    this.UpdateDB();
+    this._db.close();
+    return;
+}
+
 method.RefreshDB = function(dontSave) {
     // Just a shortcut function to save and reload the database from file.
     // Use false if you don't want to save. Synchronous function.
@@ -155,6 +161,24 @@ method.SwitchDBAsync = function(storeFile, dontSave) {
     return;
 }
 
+method.Run = function(query, params) {
+    return this._db.run(query, params);
+}
+
+method.Prepare = function(query, params) {
+    var res = [];
+    
+    this._db.each(query, params, (row) => {
+        res.push(row);
+    });
+
+    return res;
+}
+
+method.Exec = function(query) {
+    return this._db.exec(query);
+}
+
 method._IInitialiseEngine = function(fileBuffer) {
     // Internal function that loads the database buffer into the SQL.js engine.
     // Will also setup the tables the app needs.
@@ -168,7 +192,7 @@ method._IInitialiseEngine = function(fileBuffer) {
     try {
         this._db.run(`
             CREATE TABLE IF NOT EXISTS [Account] (
-                [ID] INTEGER PRIMARY KEY,
+                [ID] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Name] TEXT NOT NULL,
                 [Password] TEXT,
                 [Key] TEXT,
