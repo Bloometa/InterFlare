@@ -197,6 +197,7 @@ method._IInitialiseEngine = function(fileBuffer) {
                 [Password] TEXT,
                 [Key] TEXT,
                 [Network] TEXT,
+                [Verified] INTEGER DEFAULT (0),
                 [Added] TEXT DEFAULT (datetime('now', 'localtime')),
                 [Updated] TEXT DEFAULT (datetime('now', 'localtime'))
             );

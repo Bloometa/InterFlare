@@ -9,51 +9,25 @@ const path = require('path')
 
 const windowID = BrowserWindow.getFocusedWindow().id;
 
+document.getElementById("data--accounts--form").addEventListener("submit", function (event) {
+    event.preventDefault();
+});
+
+document.getElementById("data--accounts--form").addEventListener("delete-event", function(event) {
+    event.preventDefault();
+
+    var activeID = document.getElementById("data--accounts--list--active-id");
+    DoDeleteAccount(parseInt(activeID.value));
+
+    activeID.parentNode.removeChild(activeID);
+    return;
+});
+
 const addAccountForm = document.getElementById("data--add-account--form");
 addAccountForm.addEventListener("submit", function(event) {
     event.preventDefault();
     
     var form = document.getElementById("data--add-account--form");
-    var addAccountQuery = `
-        INSERT INTO [Account] (
-            [Name], [Password], [Network]
-        ) VALUES (
-            ?, ?, 'instagram'
-        );
-    `;
-
-    var addAccountQueryParams = [
-        form["data--add-account--username"].value,
-        form["data--add-account--password"].value
-    ];
-
-    /*dataSrc.Run(addAccountQuery, addAccountQueryParams);
-    console.log(dataSrc.Prepare(
-        `SELECT * FROM [Account]
-        WHERE [Network] = :network;`,
-        {":network": "instagram"}
-    ));*/
-
-    /*ipc.send("datastore--query--run", {
-        queryStr: addAccountQuery,
-        queryParams: addAccountQueryParams
-    });
-
-    ipc.on("datastore--query--return-run", function(event, data) {
-        ipc.send("datastore--query--prepared", {
-            queryStr: `
-                SELECT * FROM [Account]
-                WHERE [Network] = :network;
-            `,
-            queryParams: {
-                ":network": "instagram"
-            }
-        });
-
-        ipc.on("datastore--query--prepared-return", function(event, data) {
-            RenderAccounts(data);
-        });
-    });*/
 
     const computePath = "file://" + path.join(__dirname, "../compute/IQueryDataStore.html");
     let computeWindow = new BrowserWindow({ width: 400, height: 400, show: false });
@@ -61,8 +35,17 @@ addAccountForm.addEventListener("submit", function(event) {
 
     computeWindow.webContents.on("did-finish-load", function() {
         computeWindow.webContents.send("datastore--query--run", {
-            queryStr: addAccountQuery,
-            queryParams: addAccountQueryParams
+            queryStr: `
+                INSERT INTO [Account] (
+                    [Name], [Password], [Network]
+                ) VALUES (
+                    ?, ?, 'instagram'
+                );
+            `,
+            queryParams: [
+                form["data--add-account--username"].value,
+                form["data--add-account--password"].value
+            ]
         }, windowID);
     });
 
@@ -103,16 +86,52 @@ function RenderAccounts(data) {
     console.log(data);
 
     for (var item in data) {
+        var status = (data[item]["Verified"] >= 0) ? (data[item]["Verified"] === 0) ? "Waiting..." : "Logged in" : "Invalid";
+
         AccountList += `
-            <tr>
-                <td>`+ data[item]["ID"] +`</td>
-                <td>`+ data[item]["Name"] +`</td>
+            <tr id="data--add-account--list--`+ data[item]["ID"] +`">
+                <td id="data--add-account--list--`+ data[item]["ID"] +`--id">`+ data[item]["ID"] +`</td>
+                <td id="data--add-account--list--`+ data[item]["ID"] +`--name">`+ data[item]["Name"] +`</td>
+                <td id="data--add-account--list--`+ data[item]["ID"] +`--pass">`+ data[item]["Password"] +`</td>
+                <td id="data--add-account--list--`+ data[item]["ID"] +`--status">`+ status +`</td>
+                <td id="data--add-account--list--`+ data[item]["ID"] +`--actions">
+                    <button id="data--add-account--`+ data[item]["ID"] +`--edit" onclick="PushEvent('edit', `+ data[item]["ID"] +`);">Edit</button>
+                    <button id="data--add-account--`+ data[item]["ID"] +`--delete" onclick="PushEvent('delete', `+ data[item]["ID"] +`);">Delete</button>
+                </td>
             </tr>
         `;
     }
 
-    document.getElementById("data--add-account--account-list").innerHTML = AccountList;
+    document.getElementById("data--accounts--list").innerHTML = AccountList;
     return;
+}
+
+function EditAccount() {
+    //
+}
+
+function DoDeleteAccount(id) {
+    if (!id) return false;
+    if (typeof(id) !== "number") return false;
+
+    const computePath = "file://" + path.join(__dirname, "../compute/IQueryDataStore.html");
+    let computeWindow = new BrowserWindow({ width: 400, height: 400, show: false });
+    computeWindow.loadURL(computePath);
+
+    computeWindow.webContents.on("did-finish-load", function () {
+        computeWindow.webContents.send("datastore--query--run", {
+            queryStr: `
+                DELETE FROM [Account]
+                WHERE ID = ?;
+            `,
+            queryParams: [ id ]
+        }, windowID);
+    });
+
+    ipcRenderer.on("datastore--query--return-run", function (event) {
+        QueryAccounts();
+        return;
+    });
 }
 
 QueryAccounts();

@@ -25,21 +25,61 @@
 
             <button type="submit">Add account</button>
         </form>
-        
+
         <br><br>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                </tr>
-            </thead>
-            <tbody id="data--add-account--account-list"></tbody>
-        </table>
+        <form id="data--accounts--form">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody id="data--accounts--list"></tbody>
+            </table>
+        </form>
 
         <script type="text/javascript">
+            var editEvent = new CustomEvent(
+                "edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            var deleteEvent = new CustomEvent(
+                "delete-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
             require("./renderers/index.js");
+
+            function PushEvent(type, id) {
+                var hiddenInput = document.createElement("input");
+                hiddenInput.setAttribute("type", "hidden");
+                hiddenInput.setAttribute("id", "data--accounts--list--active-id");
+                hiddenInput.setAttribute("value", id);
+                
+                document.getElementById("data--accounts--form").appendChild(hiddenInput);
+                
+                switch (type) {
+                    case "edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(editEvent);
+                        break;
+                    case "delete":
+                        document.getElementById("data--accounts--form").dispatchEvent(deleteEvent);
+                        break;
+                }
+
+                return;
+            }
         </script>
-    </body>    
+    </body>
 </html>
