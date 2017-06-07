@@ -5,14 +5,41 @@
         <title>Hello World!</title>
     </head>
     <body>
-        <h1 id="test">Hello World!</h1>
+        <h1>Hello World!</h1>
         <!-- All of the Node.js APIs are available in this renderer process. -->
         We are using Node.js <script>document.write(process.versions.node)</script>,
         Chromium <script>document.write(process.versions.chrome)</script>,
         and Electron <script>document.write(process.versions.electron)</script>.
-    </body>
 
-    <script type="text/javascript">
-        require("./renderers/index.js")
-    </script>
+        <br>
+
+        <h2>Add instagram account</h2>
+        <form id="data--add-account--form">
+            <label> Username
+                <input type="text" id="data--add-account--username">
+            </label>
+            <br>
+            <label> Password
+                <input type="password" id="data--add-account--password">
+            </label>
+
+            <button type="submit">Add account</button>
+        </form>
+        
+        <br><br>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody id="data--add-account--account-list"></tbody>
+        </table>
+
+        <script type="text/javascript">
+            require("./renderers/index.js");
+        </script>
+    </body>    
 </html>
