@@ -7,9 +7,6 @@ const path = require("path");
 const url = require("url");
 const ipc = require('electron').ipcMain;
 
-const DataStore = require("./modules/data/DataStore.js");
-const dataSrc = new DataStore();
-
 let mainWindow;
 
 function createWindow () {
@@ -25,14 +22,12 @@ function createWindow () {
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
-    dataSrc.OpenDB();
 
     // Emitted when the window is closed.
     mainWindow.on("closed", function () {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        dataSrc.UpdateDB();
         mainWindow = null;
     });
 }
@@ -58,3 +53,20 @@ app.on("activate", function () {
         createWindow();
     }
 });
+
+
+/*ipc.on("datastore--query--run", function(event, arg) {
+    event.sender.send("datastore--query--return-run",
+        dataSrc.Run(arg.queryStr, arg.queryParams));
+});
+
+ipc.on("datastore--query--exec", function(event, arg) {
+    event.sender.send("datastore--query--return-exec",
+        dataSrc.Exec(arg.queryStr));
+});
+
+ipc.on("datastore--query--prepared", function(event, arg) {
+    console.log(dataSrc.Prepare(arg.queryStr, arg.queryParams));
+    event.sender.send("datastore--query--return-prepared",
+        dataSrc.Prepare(arg.queryStr, arg.queryParams));
+});*/
