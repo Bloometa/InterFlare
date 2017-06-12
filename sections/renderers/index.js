@@ -23,6 +23,36 @@ document.getElementById("data--accounts--form").addEventListener("delete-event",
     return;
 });
 
+document.getElementById("data--accounts--form").addEventListener("edit-event", function(event) {
+    event.preventDefault();
+
+    var activeID = document.getElementById("data--accounts--list--active-id");
+    SetupEditAccount(parseInt(activeID.value));
+
+    activeID.parentNode.removeChild(activeID);
+    return;
+});
+
+document.getElementById("data--accounts--form").addEventListener("cancel-edit-event", function(event) {
+    event.preventDefault();
+
+    var activeID = document.getElementById("data--accounts--list--active-id");
+    activeID.parentNode.removeChild(activeID);
+
+    QueryAccounts();
+    return;
+});
+
+document.getElementById("data--accounts--form").addEventListener("save-edit-event", function(event) {
+    event.preventDefault();
+
+    var activeID = document.getElementById("data--accounts--list--active-id");
+    DoEditAccount(parseInt(activeID.value));
+
+    activeID.parentNode.removeChild(activeID);
+    return;
+});
+
 const addAccountForm = document.getElementById("data--add-account--form");
 addAccountForm.addEventListener("submit", function(event) {
     event.preventDefault();
@@ -104,8 +134,47 @@ function RenderAccounts(data) {
     return;
 }
 
-function EditAccount() {
-    //
+function SetupEditAccount(id) {
+    if (!id) return false;
+    if (typeof(id) !== "number") return false;
+
+    document.getElementById("data--add-account--list--"+ id +"--name")
+        .innerHTML = `<input type="text" value="`+ document.getElementById("data--add-account--list--"+ id +"--name").innerText +`">`;
+    document.getElementById("data--add-account--list--"+ id +"--pass")
+        .innerHTML = `<input type="text" value="`+ document.getElementById("data--add-account--list--"+ id +"--pass").innerText +`">`;
+
+    document.getElementById("data--add-account--list--"+ id +"--actions")
+        .innerHTML = `
+            <button id="data--add-account--`+ id +`--cancel-edit" onclick="PushEvent('cancel-edit', `+ id +`);">Cancel</button>
+            <button id="data--add-account--`+ id +`--save-edit" onclick="PushEvent('save-edit', `+ id +`);">Save</button>
+        `;
+}
+
+function DoEditAccount(id) {
+    if (!id) return false;
+    if (typeof(id) !== "number") return false;
+
+    const computePath = "file://" + path.join(__dirname, "../compute/IQueryDataStore.html");
+    let computeWindow = new BrowserWindow({ width: 400, height: 400, show: false });
+    computeWindow.loadURL(computePath);
+
+    computeWindow.webContents.on("did-finish-load", function() {
+        computeWindow.webContents.send("datastore--query--run", {
+            queryStr: `
+                UPDATE [Account] SET
+                    [Name] = ?,
+                    [Password] = ?
+                WHERE
+                    [ID] = ?;
+            `,
+            queryParams: [
+                document.querySelector("#data--add-account--list--"+ id +"--name input").value,
+                document.querySelector("#data--add-account--list--"+ id +"--pass input").value,
+                id
+            ]
+        }, windowID);
+    });
+    return;
 }
 
 function DoDeleteAccount(id) {

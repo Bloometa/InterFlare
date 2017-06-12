@@ -50,6 +50,24 @@
                 }
             );
 
+            var cancelEditEvent = new CustomEvent(
+                "cancel-edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            var saveEditEvent = new CustomEvent(
+                "save-edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
             var deleteEvent = new CustomEvent(
                 "delete-event",
                 {
@@ -72,6 +90,12 @@
                 switch (type) {
                     case "edit":
                         document.getElementById("data--accounts--form").dispatchEvent(editEvent);
+                        break;
+                    case "cancel-edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(cancelEditEvent);
+                        break;
+                    case "save-edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(saveEditEvent);
                         break;
                     case "delete":
                         document.getElementById("data--accounts--form").dispatchEvent(deleteEvent);
