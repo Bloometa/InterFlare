@@ -43,17 +43,17 @@ addAccountForm.addEventListener("submit", function(event) {
                 );
             `,
             queryParams: [
-                form["data--add-account--username"].value,
-                form["data--add-account--password"].value
+                document.getElementById("data--add-account--username").value,
+                document.getElementById("data--add-account--password").value
             ]
         }, windowID);
     });
 
-    form.reset();
     return;
 });
 
 ipcRenderer.on("datastore--query--return-run", function(event) {
+    document.getElementById("data--add-account--form").reset();
     QueryAccounts();
 });
 
@@ -82,8 +82,6 @@ function QueryAccounts() {
 
 function RenderAccounts(data) {
     var AccountList = "";
-
-    console.log(data);
 
     for (var item in data) {
         var status = (data[item]["Verified"] >= 0) ? (data[item]["Verified"] === 0) ? "Waiting..." : "Logged in" : "Invalid";
