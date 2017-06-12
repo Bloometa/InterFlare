@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <!-- All of the Node.js APIs are available in this renderer process. -->
+        We are using Node.js <script>document.write(process.versions.node)</script>,
+        Chromium <script>document.write(process.versions.chrome)</script>,
+        and Electron <script>document.write(process.versions.electron)</script>.
+
+        <br>
+
+        <h2>Add instagram account</h2>
+        <form id="data--add-account--form">
+            <label> Username
+                <input type="text" id="data--add-account--username">
+            </label>
+            <br>
+            <label> Password
+                <input type="password" id="data--add-account--password">
+            </label>
+
+            <button type="submit">Add account</button>
+        </form>
+
+        <br><br>
+
+        <form id="data--accounts--form">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody id="data--accounts--list"></tbody>
+            </table>
+        </form>
+
+        <script type="text/javascript">
+            var editEvent = new CustomEvent(
+                "edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            var cancelEditEvent = new CustomEvent(
+                "cancel-edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            var saveEditEvent = new CustomEvent(
+                "save-edit-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            var deleteEvent = new CustomEvent(
+                "delete-event",
+                {
+                    detail: { },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            require("./renderers/index.js");
+
+            function PushEvent(type, id) {
+                var hiddenInput = document.createElement("input");
+                hiddenInput.setAttribute("type", "hidden");
+                hiddenInput.setAttribute("id", "data--accounts--list--active-id");
+                hiddenInput.setAttribute("value", id);
+                
+                document.getElementById("data--accounts--form").appendChild(hiddenInput);
+                
+                switch (type) {
+                    case "edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(editEvent);
+                        break;
+                    case "cancel-edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(cancelEditEvent);
+                        break;
+                    case "save-edit":
+                        document.getElementById("data--accounts--form").dispatchEvent(saveEditEvent);
+                        break;
+                    case "delete":
+                        document.getElementById("data--accounts--form").dispatchEvent(deleteEvent);
+                        break;
+                }
+
+                return;
+            }
+        </script>
+    </body>
+</html>

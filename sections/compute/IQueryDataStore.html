@@ -1,0 +1,30 @@
+<html>
+    <script type="text/javascript">
+        const ipc = require("electron").ipcRenderer;
+        const BrowserWindow = require("electron").remote.BrowserWindow;
+
+        const DataStore = require("../../modules/data/DataStore.js");
+        const dataSrc = new DataStore();
+        dataSrc.OpenDB();
+
+        ipc.on("datastore--query--run", function(event, input, fromWindowId) {
+            const fromWindow = BrowserWindow.fromId(fromWindowId);
+            var result = dataSrc.Run(input.queryStr, input.queryParams);
+            fromWindow.webContents.send("datastore--query--return-run");
+            CleanUp();
+        });
+
+        ipc.on("datastore--query--prepared", function(event, input, fromWindowId) {
+            const fromWindow = BrowserWindow.fromId(fromWindowId);
+            var result = dataSrc.Prepare(input.queryStr, input.queryParams);
+            fromWindow.webContents.send("datastore--query--return-prepared", result);
+            CleanUp();
+        });
+
+        function CleanUp() {
+            dataSrc.CloseDB();
+            window.close();
+            return;
+        }
+    </script>
+</html>
