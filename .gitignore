@@ -62,3 +62,4 @@ typings/
 
 # Custom files
 modules/data/store.db
+.vscode
