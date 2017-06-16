@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         bat 'npm install'
-        bat 'node run build-windows'
+        bat 'npm run build-windows'
       }
     }
     stage('Deploy') {
