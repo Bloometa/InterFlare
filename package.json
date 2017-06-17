@@ -5,10 +5,10 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "build -mwl --x64 --ia32",
-    "build-windows": "build --windows --x64 --ia32",
-    "build-mac": "build --mac --x64 --ia32",
-    "build-linux": "build --linux --x64 --ia32"
+    "build": "build -mwl --x64 --ia32 --publish never",
+    "build-windows": "build --windows --x64 --ia32 --publish never",
+    "build-mac": "build --mac --x64 --ia32 --publish never",
+    "build-linux": "build --linux --x64 --ia32 --publish never"
   },
   "build": {
     "appId": "nz.crook.matt.interflare",
