@@ -1,0 +1,50 @@
+<html>
+    <script type="text/javascript">
+        const ipc = require("electron").ipcRenderer;
+        const BrowserWindow = require("electron").remote.BrowserWindow;
+
+        const Instagram = require("../../modules/api/Instagram.js");
+        const ig = new Instagram();
+
+        ipc.on("httpmanager--ig--request", function(event, input, fromWindowId) {
+            const fromWindow = BrowserWindow.fromId(fromWindowId);
+            
+            ig.Setup().then(() => {
+                DoAuth();
+            });
+
+            function DoAuth() {
+                ig.Authenticate(
+                    input.data.username,
+                    input.data.password
+                );
+            }
+
+            /*switch (input.reqType) {
+                case "auth--check":
+                    ig.Authenticate(
+                        input.data.username,
+                        input.data.password
+                    )
+
+                        .then((data) => {
+                            console.log(data);
+                        })
+                        
+                        .catch((e) => {
+                            console.error(e);
+                        });
+                    
+                    break;
+            }*/
+
+            //fromWindow.webContents.send("httpmanager--ig--return-request", result);
+            //CleanUp();
+        });
+
+        function CleanUp() {
+            window.close();
+            return;
+        }
+    </script>
+</html>

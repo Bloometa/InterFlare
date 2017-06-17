@@ -9,6 +9,22 @@ const path = require('path')
 
 const windowID = BrowserWindow.getFocusedWindow().id;
 
+document.getElementById("test").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    var form = document.getElementById("data--add-account--form");
+
+    const computePath = "file://" + path.join(__dirname, "../compute/IHTTPManager.html");
+    let computeWindow = new BrowserWindow({ width: 1280, height: 700, show: true });
+    computeWindow.loadURL(computePath);
+
+    computeWindow.webContents.on("did-finish-load", function () {
+        computeWindow.webContents.send("httpmanager--ig--request", null, windowID);
+    });
+
+    return;
+});
+
 document.getElementById("data--accounts--form").addEventListener("submit", function (event) {
     event.preventDefault();
 });
