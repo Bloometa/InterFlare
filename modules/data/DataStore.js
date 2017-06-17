@@ -1,11 +1,12 @@
-var fs = require("fs");
-var path = require("path");
-var SQL = require("sql.js");
+const fs = require("fs");
+const path = require("path");
+const SQL = require("sql.js");
+const app = require("electron").remote.app;
 
 var method = DataStore.prototype;
 
 function DataStore(storeFile = "./store.db") {
-    this._dbFile = path.join(__dirname, storeFile);
+    this._dbFile = path.join(app.getPath("userData"), storeFile);
 }
 
 method.OpenDB = function() {
